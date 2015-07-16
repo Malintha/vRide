@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+<!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search</title>
+
+<link rel="stylesheet" href="assets/jquery.mobile-1.3.1.css"></link>
+<link rel="stylesheet" href="assets/iconic/iconic_fill.css"></link>
+
+
+<script type="text/javascript" src="assets/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="assets/jquery.mobile-1.3.1.js"></script>
+<script type="text/javascript" src="assets/jquery.mobile-1.3.1.js"></script>
+<script type="text/javascript" charset="utf-8" src="assets/cordova-2.3.0.js"></script>
+<script type="text/javascript" src="assets/jquery_cookie.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+
+
+	<!--<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>-->
+	<!--<script src="assets/map.js" type="text/javascript"></script>-->
+	<script type="text/javascript">
+	function initialize() {
+	$.mobile.loading( "hide" );
+	alert("ini");
+	var options = {
+	types: ['(cities)'],
+	componentRestrictions: {country: 'lk'}
+	};
+
+	var input_start1 = (document.getElementById('startpointid'));
+	var auto_start = new google.maps.places.Autocomplete(input_start1,options);
+
+	var input_dest1 = (document.getElementById('destpointid'));
+	var auto_dest = new google.maps.places.Autocomplete(input_dest1,options);
+	
+	    var mapOptions = {
+        center: new google.maps.LatLng(6.9167, 79.8333),
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        zoom: 11
+      };
+      
+      map = new google.maps.Map(document.getElementById("map"), mapOptions);
+     
+      
+      directionService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map });  
+	
+	
+	}
+
+	function clicked(){
+	window.location.href = "post.html";
+	}
+
+	</script>
+
+
+		<script>
+				function route(from,to,rpath) {
+		var request = {
+        origin: from,
+        destination: to,
+        travelMode: google.maps.DirectionsTravelMode.DRIVING 
+		}
+
+		directionService.route(request, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          directionsRenderer.setDirections(result);
+          path = result.routes[0].overview_path;
+		  //getpath(path);
+		  
+        } else {
+          alert("Directions query failed: " + status);
+        }
+		rpath(result.routes[0].overview_path);
+      });
+
+	  }
+		
+		
+		
+		
+	alert("start");
+	var selected=[];
+	var start_point = null;
+	var end_point = null;
+	var path_search=null;
+	var search_st=null;
+	var search_des=null;
+	var path_db1=null;
+	var path_db2=null;
+	var path_db=null;
+	var globalpath=null;
+	var search_st_prov=null;
+	var search_des_prov=null;
+	
+	function loadfromdb(){
+	$('#ullist1').html("");
+	search_st = $('#startpointid').val();
+	search_st_prov = search_st.split(",")[1];
+	search_des= $("#destpointid").val();
+	search_des_prov = search_des.split(",")[1];
+	alert("search details:"+search_st_prov+"-"+search_des_prov);
+	
+	
+	var currentDate = new Date();
+	var day = currentDate.getDate();
+	var month = currentDate.getMonth();
+	var year = currentDate.getFullYear();
+	var date = year+"-"+month+"-"+day;
+	alert(date);
+	$.mobile.loading("show");
+	$.ajax({
+    type: 'POST',  
+    data: ({p:date}),
+    url: 'http://malintha.knnect.com/php/search.php',
+    success: function(output1) {
+         			$.mobile.loading("hide");
+                  	//var out=output1;
+					alert(output1);
+         		  	jsonarray_de = jQuery.parseJSON(output1);
+					//alert(jsonarray_de[0].startingpoint+" **** "+jsonarray_de[0].via+" **** "+jsonarray_de[0].destination);
+					//alert(jsonarray_de.length);
+					
+					loop(jsonarray_de);
+					}
+					
+});
+	
+	}
+	
+	function loop(jsonarray_de){
+	alert("al1");
+	var coun=0;
+	for(var i=0;i<jsonarray_de.length;i++){
+			if((jsonarray_de[i].startingpoint.split(",")[1]==search_st_prov)||(jsonarray_de[i].destination.split(",")[1]==search_des_prov)){
+			//alert("match found"+jsonarray_de[i].startingpoint+","+jsonarray_de[i].destination+"-"+jsonarray_de[i].no_of_seats);
+			
+			$('#ullist1').append("<li><a><p><span class='ui-li-count'>"+jsonarray_de[i].no_of_seats+"</span></p><h3>"+jsonarray_de[i].startingpoint.split(",")[0]+","+jsonarray_de[i].startingpoint.split(",")[1]+" To <br>"+jsonarray_de[i].destination.split(",")[0]+","+jsonarray_de[i].destination.split(",")[1]+ "<br> On "+jsonarray_de[i].leaving_time+ "</h3><p>Posted By <strong>"+ jsonarray_de[i].displayname+ "</strong></p><p>Women Only : "+jsonarray_de[i].preffered+" |  Smoke : "+jsonarray_de[i].smoking+"</p><p>Per Head "+jsonarray_de[i].per_head+"</p><br><p><strong>Posted on </strong>"+jsonarray_de[i].post_time+"</p></a></li>");
+			$("#ullist1").listview("refresh");
+			selected.push(jsonarray_de[i]);
+			alert("inserted");
+			coun=coun+1;
+			}
+	}
+	if(coun==0){
+	$('#ullist1').append("<li><p>No matching journeys for the searched coordinates</p></li>");}
+	}
+$(document).ready(function(){
+if($.cookie('noti_count')!=0){
+		$("#noti").html("<font style='color:red;'>"+$.cookie('noti_count')+"</font>");}
+
+$('#ullist1').on('click', 'li', function () {
+
+
+	search_st = $('#startpointid').val();
+	search_des= $("#destpointid").val();
+
+	var index_map = $(this).index();
+	//alert(index_map);
+	//alert(selected[index_map].startingpoint+"-"+selected[index_map].destination);
+
+	route(search_st, search_des, function(route) {
+	path_search = route;
+	//alert("sarching"+path_search);
+	});
+		
+	route(selected[index_map].startingpoint, selected[index_map].destination, function(route) {
+	path_db = route;
+	//alert("db"+path_db);
+	});
+
+var x;
+var r=confirm("View Your journey on the map?!");
+if (r==true)
+  {
+	start_p(path_search,path_db);
+  }
+else
+  {
+	$.cookie('j_id',selected[index_map].j_id);
+	alert($.cookie('j_id'));
+	$.mobile.loading( "show" );
+	window.location.href = "journey_details.html";
+	$.mobile.loading("hide");
+	 return;
+  }
+//$("#rre").html(x+"-"+index_map);
+
+
+/*
+$.cookie('j_id',jsonarray[index_feed].j_id);
+
+alert($.cookie('j_id'));
+$.mobile.loading( "show" );
+$.mobile.changePage("journey_details.html");
+$.mobile.loading( "hide" );
+*/
+
+});
+});
+	
+	/*
+	function calc(){
+	alert('serach'+path_search[0]);
+	//alert('db'+path_db[0]);
+	start_p(path_search,path_db);
+	}
+	*/
+	function start_p(path_search,path_db){
+	var search_startpoint_index=null;
+	var db_startpoint_index;
+	//alert (path_search.length);
+	//alert (path_db.length);
+	
+	for (var k=0;k<path_search.length;k++){
+	//var k=0;
+	for (var j=0;j<path_db.length;j++){
+	if((path_db[j].lat()==path_search[k].lat()) && (path_db[j].lng()==path_search[k].lng())){
+	//alert(k+" "+j);
+	start_point = path_db[j];
+	//alert('found startpoint '+start_point+' index '+j);
+	search_startpoint_index=k;
+	db_startpoint_index=j;
+	//alert(search_startpoint_index+" "+db_startpoint_index);
+	e_point(path_search,path_db,search_startpoint_index,db_startpoint_index);
+	break;
+	}
+	}
+	if(search_startpoint_index!=null)
+	break;
+	}
+	if(search_startpoint_index==null){
+	alert("no match in the path");
+	return;
+	}
+	}
+	
+	function e_point(path_search,path_db,i,j){
+	//alert(i+" "+j);
+	while((path_search[i].lat()==path_db[j].lat())&& (path_search[i].lng()==path_db[j].lng()) && (i<path_search.length) && (j<path_db.length)) {
+	i++;
+	j++;
+	//alert('end p db points '+path_db[j]);
+	end_point = path_db[j];
+	}
+	//alert('end'+end_point);
+	route(start_point, end_point, function(route) {
+	path_result = route;
+	//alert(path_result);
+	});
+	}
+	
+	
+		</script>
+<script>
+	function reload(){
+	location.reload();
+	}
+	function prof(){
+	window.location.href = "profile.html";
+	}
+	function toinbox(){
+	window.location.href = "inbox.html";
+	}
+	function tohome(){
+	window.location.href = "home.html";
+	}
+</script>
+
+
+</head>
+<body onload="initialize();">
+<div data-role="header" data-theme="a">
+	<a  id="logout" data-icon="clear" href="#">Logout</a>
+	<h1 align="left"><a href="home.html">Vride</a></h1>
+	<a id="notif" data-icon="alert" href="#"><div id="noti">0</div></a>
+</div>
+
+<div data-role="navbar" data-iconpos="bottom" data-theme="a">
+	<ul>
+			<li><a onclick="prof();" data-icon="grid">Profile</a></li>
+			<li><a onclick="toinbox();" data-icon="bars"  >Inbox</a></li>
+			<li><a data-icon="edit" onclick="clicked();">Post</a></li>
+			<li><a onclick="reload();" data-icon="search" class="ui-btn-active" >Search</a></li>
+			
+
+		</ul>
+	</div>
+<div data-role="content" id="content">
+
+<input type="text" placeholder="Start point*" id="startpointid" name="startpoint" data-mini="true">
+<table><tr><td>
+
+<!--<input type="button" data-mini="true" id="search_start" value="Search">--></td><td><input type="button" data-icon="grid" data-mini="true" id="getgpsstart" value="This Point"></td></tr></table>
+<br>
+<input type="text" placeholder="Destination*" id="destpointid" name="destination" data-mini="true">
+<table><tr><td>
+
+<input type="button" data-mini="true" id="getgpsend" data-icon="grid" value="This Point"></td></tr></table>
+
+				
+				</div>
+<input type="button" value="Search" data-icon="search" id="btnsub" data-mini="true" onclick="loadfromdb();" >
+
+
+<div data-demo-html="true" id="divlist">
+				<ul data-role="listview" data-inset="true" id="ullist1" data-divider-theme="b">
+								
+</ul>
+</div>
+<br>
+
+<div id="map" style="width:90%;height:400px;margin:0 auto;"></div>
+<div id="rre"></div>								
+</body>
+
+</html>

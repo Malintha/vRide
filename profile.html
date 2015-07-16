@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+<!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile</title>
+<script type="text/javascript" src="assets/jqmsimpledialog.js"></script>
+<script type="text/javascript" src="assets/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="assets/jquery.mobile-1.3.1.js"></script>
+<script type="text/javascript" src="assets/prof.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="assets/cordova-2.3.0.js"></script>
+<link rel="stylesheet" href="assets/jquery.mobile-1.3.1.css"></link>
+<link rel="stylesheet" href="assets/iconic/iconic_fill.css"></link>
+<script type="text/javascript" src="assets/jqmsimpledialog.js"></script
+<script type="text/javascript" src="assets/jquery_cookie.js"></script>
+
+</head>
+<body>
+<script type="text/javascript" charset="utf-8" src="assets/prof.js"></script>
+<div data-role="header" data-theme="b">
+	<a  id="logout" data-icon="clear" href="#">Logout</a>
+	<h1 align="left"><a href="home.html">Vride</a></h1>
+	<a data-icon="info" href="#">Notifications</a>
+</div>
+<div data-role="navbar" data-iconpos="bottom" data-theme="a">
+	<ul>
+			
+			<li><a href="profile.html" data-icon="grid" class="ui-btn-active">Profile</a></li>
+			<li><a href="inbox.html" data-icon="bars">Inbox</a></li>
+			<li><a href="post.html" data-icon="edit">Post</a></li>
+			<li><a href="search.html" data-icon="search" >Search</a></li>
+		</ul>
+	</div>
+	<div data-role="content">
+<table style=" border-radius: 8px; min-height:75px;" width="100%" bgcolor="#eee" style="border-collapse:separate;border-spacing:5px;">
+			<tr>
+				<td style="padding-left:15px;font-size:x-large;">
+				<div style="width: 100%;" id="name"></div>
+				</td>
+				<td id="addpic" align="center" rowspan="3">
+				<!--<div align="center" style="background-image:url('imgs/icon_doc.gif');background-position:center"></div>-->
+				<img style="display:table-cell;width:55px;height:55px;" id="smallImage" src="imgs/acspike_male_user_icon.png" />
+				</td>
+			</tr>
+			<tr>
+				<td style="padding-left:15px;font-size:large;">
+				<div style="width: 100%;" id="position"></div>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding-left:15px;font-size:medium;">
+				<div style="width: 100%;" id="company"></div>
+				</td>
+			</tr>
+			</table>    
+			<br>
+				<div data-demo-html="true" id="divlist">
+					<ul data-role="listview" data-inset="true" id="ullist" data-divider-theme="b">		
+					<li>
+					<a href="badges_new.html"><h3>Badges</h3></a>
+					</li>
+					<li>
+					<a href="j_req.html" data-rel="dialog">
+                       <h3>My Rides</h3>
+					</a>
+					</li>
+					<li><a href="profile.html" data-icon="grid" >
+						<h3>Update Profile</h3></a></li>
+					<li><a href="vehicle.html" data-rel="dialog">
+							<h3>Add Vehicles</h3></a></li>			
+					</ul>
+				</div>
+			
+			
+			
+			</div>
+</body>
+</html>

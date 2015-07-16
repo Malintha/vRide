@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+<!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+
+<script type="text/javascript" src="assets/jquery-2.0.0.min.js"></script>
+<script type="text/javascript" src="assets/jquery.mobile-1.3.1.js"></script>
+<script type="text/javascript" charset="utf-8" src="assets/cordova-2.3.0.js"></script>
+<link rel="stylesheet" href="assets/jquery.mobile-1.3.1.css"></link>
+<link rel="stylesheet" href="assets/iconic/iconic_fill.css"></link>
+</head>
+<body>
+<div data-role="header" data-theme="b">
+	<script type="text/javascript" charset="utf-8" src="js/vehicle.js"></script>
+	<h1 align="center">Vehicle</h1>
+
+</div>	
+<div data-role="content" id="content">
+	<div data-demo-html="true">
+		<input type="text" name="vname" id="vname" value="" placeholder="Vehicle name" /> 
+		<select name="select-choice-Month" id="type">
+			<option value="" data-placeholder="true">Select type</option>
+			<option value="car">Car</option>
+			<option value="van">Van</option>
+			<option value="cab">Cab</option>
+		</select>
+		<input type="text" name="vregi" id="vregi" value="" placeholder="Registration Number" /> 
+		<input type="text" name="vcolor" id="vcolor" value="" placeholder="Color" /> 
+		<input type="text" name="vseats" id="vseats" value="" placeholder="Number of seats" /> 
+		<a href="#popupBasic" data-rel="popup" data-role="button"><img style="width:120px; height:100px;" src="imgs/vehicle_default.jpeg" id="vehicle_image" src="" /></a>
+
+<div data-role="popup" id="popupBasic">
+	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+	<p><input type="button" value="Take a picture" onClick="takePicture();"></input></p>
+	<p><input type="button" value="Select from gallery" onClick="selectPicture();"></input></p>
+</div>
+		
+		<input type="Button" name="submi" id="submi" value="Add" onClick="vehicleImage();"/> 
+	</div>
+</div>
+</body>
+
+</html>

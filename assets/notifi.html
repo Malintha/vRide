@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+<!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notifications</title>
+
+	<link rel="stylesheet" href="assets/jqm-latest.css"></link>
+	<link rel="stylesheet" href="assets/jqm_datebox.css"></link>
+	<link type="text/css" href="assets/jqm-mini.css" rel="stylesheet" /> 
+	<link rel="stylesheet" href="assets/jqm-simpled.css"></link>
+	
+	<script type="text/javascript" src="assets/jquery-2.0.0.min.js"></script>
+	<script type="text/javascript" src="assets/jqm-mob-latest.js"></script>
+	<script type="text/javascript" src="assets/jquery_cookie.js"></script>
+
+</head>
+<body>
+<script>
+$(document).ready(function(){
+$.ajax({
+    type: 'POST',  
+    data: ($.cookie('id_cookie')),
+    url: 'http://malintha.knnect.com/php/noti_pending.php',
+    success: function(pending) {
+         			$.mobile.loading("hide");
+					alert(pending);
+         		  	json_pend = jQuery.parseJSON(pending);
+					fill_pend(json_pend);
+                  	}
+});
+function fill_pend(){
+alert("in");
+}
+
+});
+</script>
+
+<div data-role="header" data-theme="b">
+	<a data-icon="Home" href="#"></a>
+	<h1 align="left">Notifications</h1>
+	<a data-icon="Home" href="#"></a>
+</div>
+
+<script>
+</script>
+	
+<div data-role="content" id="content">
+<div id="profile"> 
+<!--<img src="imgs/user.png">-->
+</div>
+<div data-demo-html="true" id="divlist">
+				<ul data-role="listview" data-inset="true" id="detail_list" data-divider-theme="b">
+
+								
+</ul>
+</div> 
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+<!--<meta content="text/html; charset=utf-8" http-equiv="Content-Type">-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notifications</title>
+
+	<link rel="stylesheet" href="assets/jqm-latest.css"></link>
+	<link rel="stylesheet" href="assets/jqm_datebox.css"></link>
+	<link type="text/css" href="assets/jqm-mini.css" rel="stylesheet" /> 
+	<link rel="stylesheet" href="assets/jqm-simpled.css"></link>
+	<link rel="stylesheet" href="assets/jq_ui.css"></link>
+	
+	<script type="text/javascript" src="assets/jquery-2.0.0.min.js"></script>
+	<script type="text/javascript" src="assets/jqm-mob-latest.js"></script>
+	<script type="text/javascript" src="assets/jquery_cookie.js"></script>
+	<script type="text/javascript" src="assets/jq_ui.js"></script>
+</head>
+<body>
+<script>
+$(document).ready(function(){
+var j_array=[];
+var key;
+var u_id = $.cookie('id_cookie');
+var ser_d="u_id="+u_id;
+//alert(ser_d);
+//alert(u_id);
+$.ajax({
+    type: 'POST',  
+    data: ser_d,
+    url: 'http://malintha.knnect.com/php/read_noti.php',
+    success: function(read_not) {
+					//alert(read_not);
+                  	}
+});
+
+$.ajax({
+    type: 'POST',  
+    data: ser_d,
+    url: 'http://malintha.knnect.com/php/noti_pending.php',
+    success: function(pending) {
+         			$.mobile.loading("hide");
+					//alert(pending);
+         		  	json_pend = jQuery.parseJSON(pending);
+					fill_pend(json_pend);
+                  	}
+});
+function fill_pend(json_pend){
+alert("in"+json_pend[0].fullname);
+for(var i=0;i<json_pend.length;i++){
+$('#pending_list').append("<li data-icon='false'><a><img src='http://malintha.knnect.com/prof_pics/"+json_pend[i].sender+".jpg'><p><span class='ui-li-count'>"+json_pend[i].no_of_seats+"</span></p><h2 style='margin-top:-15px;'>"+json_pend[i].fullname+" Wants join your journey</h3>"+"<p style='margin-top:-5px;'>"+"From "+json_pend[i].startingpoint.split(",")[0]+" To "+json_pend[i].destination.split(",")[0]+" On "+json_pend[i].leaving_time+".</p><p style='margin-top:-3px;'> "+json_pend[i].fullname+" is a "+json_pend[i].possition+" At "+json_pend[i].company+"</p></a></li>");
+//$('#pending_list').append("<li ><a><h3>"+json_pend[i].fullname+" Wants to join your Ride</h3>+ "<br> On "+json_pend[i].leaving_time+ "<p>Posted On <strong>"+ json_pend[i].post_time+ "</strong></p><p>"+json_pend[i].possition+" At "+json_pend[i].company+"</p></a></li>");
+$("#pending_list").listview("refresh");
+key=json_pend[i].j_id+","+json_pend[i].sender;
+j_array.push(key);
+//alert(key);
+}
+}
+$('#pending_list').on('click', 'li', function () {
+var key_index=$(this).index();
+var p_key=j_array[key_index];
+//alert("j_id="+p_key.split(",")[0]+" sender="+p_key.split(",")[1]);
+var ser_data="u_id="+p_key.split(",")[1]+"&j_id="+p_key.split(",")[0];
+//alert(ser_data);
+
+$("#dialog-confirm").dialog({
+resizable: false,
+height:140,
+modal: true,
+buttons: {
+"Accept": function() {
+$( this ).dialog( "close" );
+//alert(ser_data);
+$.mobile.loading("show");
+$.ajax({
+    type: 'POST',  
+    data: ser_data,
+    url: 'http://malintha.knnect.com/php/accept.php',
+    success: function(accept) {
+         			$.mobile.loading("hide");
+					//alert(accept);
+					location.reload();
+                  	}
+});
+
+},
+"Reject": function() {
+$( this ).dialog( "close" );
+alert(ser_data);
+$.mobile.loading("show");
+$.ajax({
+    type: 'POST',  
+    data: ser_data,
+    url: 'http://malintha.knnect.com/php/reject.php',
+    success: function(accept) {
+         			$.mobile.loading("hide");
+					//alert(accept);
+					location.reload();
+                  	}
+});
+}
+
+}
+
+});
+
+
+});
+
+
+$("#backhome").click(function(){
+window.location.href = "home.html";
+
+}); 
+
+$.ajax({
+    type: 'POST',  
+    data: ser_d,
+    url: 'http://malintha.knnect.com/php/response.php',
+    success: function(response) {
+         			$.mobile.loading("hide");
+					//alert(response);
+         		  	json_res = jQuery.parseJSON(response);
+					fill_response(json_res);
+                  	}
+});
+
+function fill_response(json_res){
+for(var i=0;i<10;i++){
+if(json_res[i].states=="accepted"){
+$("#accepted_list").append("<li style='height:60px;'><img style='width:80px;height:80px;' src='http://malintha.knnect.com/prof_pics/"+json_res[i].reciever+".jpg'><h3 style='color:black;margin-top:-5px;'>Congradulations!</h3> <h3 style='margin-top:0px;'><small>"+json_res[i].fullname+" has accepted your request! :D </small></h3><p style='margin-top=-5px;'>From "+json_res[i].startingpoint.split(",")[0]+" to "+json_res[i].destination.split(",")[0]+" on "+json_res[i].leaving_time+"</p></li>");
+}
+else{
+$("#rejected_list").append("<li><img src='http://malintha.knnect.com/prof_pics/sorry.jpg' style='margin-top:15px;margin-left:5px;'><h3>Sorry!</h3><h3><small> "+json_res[i].fullname+" has rejected your request! :( </small><p>"+json_res[i].startingpoint.split(",")[0]+" to "+json_res[i].destination.split(",")[0]+" on "+json_res[i].leaving_time+"</p> </li>");
+}
+$("#accepted_list").listview("refresh");
+$("#rejected_list").listview("refresh");
+}
+}
+
+
+
+
+});
+</script>
+
+
+<div data-role="header" data-theme="b">
+	<a data-icon="Home" href="home.html">Home</a>
+	<h1 align="left">Notifications</h1>
+	<a data-icon="Home" href="#"></a>
+</div>
+<div id="dialog-confirm" title="Respond to request">
+</div>
+<script>
+</script>
+	
+<div data-role="content" id="content">
+<h3>Pending Requests</h3>
+<div data-demo-html="true" id="divlist">
+				<ul data-role="listview" data-inset="true" id="pending_list" data-divider-theme="b"></ul></div>
+				
+<h3>Responses</h3>
+<div data-demo-html="true" id="divlist">
+				<ul data-role="listview" data-inset="true" id="accepted_list" data-divider-theme="b">				
+</ul>
+</div> 
+<div data-demo-html="true" id="divlist">
+				<ul data-role="listview" data-inset="true" id="rejected_list" data-divider-theme="b">				
+</ul>
+</div> 
+
+
+</body>
+
+</html>
